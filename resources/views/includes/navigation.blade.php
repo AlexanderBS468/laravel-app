@@ -3,33 +3,32 @@
 use \Illuminate\Support\Facades\Request;
 
 $navigation = [
-    '/' => [
+    [
         'name' => 'Main',
         'selected' => false,
+        'link' => route('main')
     ],
-    'about' => [
+    [
         'name' => 'About us',
         'selected' => false,
+        'link' => route('about')
     ],
-    'contacts' => [
+    [
         'name' => 'Contacts',
         'selected' => false,
+        'link' => route('contacts')
     ],
 ];
 
-$request = Request::getFacadeRoot();
-$uri = $request->path();
+$url = Request::getFacadeRoot()->url();
 
-if (isset($navigation[$uri]) && !empty($navigation[$uri]))
-{
-    $navigation[$uri]['selected'] = true;
-}
-
+$selected = array_search($url, array_column($navigation,'link'));
+$navigation[$selected]['selected'] = true;
 ?>
 
 <h4 class="text-white">Site map</h4>
 <ul class="list-unstyled">
-    @foreach ($navigation as $link => $item)
-        <li><a href="{{ $link }}" class="text-white {{ ($item['selected'] ? 'selected' : '') }}">{{ $item['name'] }}</a></li>
+    @foreach ($navigation as $key => $item)
+        <li><a href="{{ $item['link'] }}" class="text-white {{ ($item['selected'] ? 'selected' : '') }}">{{ $item['name'] }}</a></li>
     @endforeach
 </ul>

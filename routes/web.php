@@ -12,15 +12,55 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+use \Illuminate\Support\Facades\Request;
 
-Route::get('/', function () {
-    return view('main');
-});
+$routePages = [
+    'get' => [
+        [
+            'url' => '/',
+            'view' => 'main',
+            'name' => 'main'
+        ],
+        [
+            'url' => '/about',
+            'view' => 'about',
+            'name' => 'about'
+        ],
+        [
+            'url' => '/contacts',
+            'view' => 'contacts',
+            'name' => 'contacts'
+        ],
+    ],
+    'post' => [
+        [
+            'url' => '/contacts/submit',
+            'return' => Request::all(),
+            'name' => 'contact-form',
+        ]
+    ]
+];
 
-Route::get('/about', function () {
-    return view('about');
-});
+foreach ($routePages as $type => $types)
+{
+    foreach ($types as $item)
+    {
+        if (empty($item)) { continue; }
+        switch ($type)
+        {
+            case 'get':
+                $view = $item['view'];
+                Route::get($item['url'], function () use ($view) {
+                    return view($view);
+                })->name($item['name']);
+                break;
+            case 'post':
+                $return = $item['return'];
+                Route::post($item['url'], function () use ($return) {
+                    return $return;
+                })->name($item['name']);
+                break;
+        }
+    }
 
-Route::get('/contacts', function () {
-    return view('contacts');
-});
+}
